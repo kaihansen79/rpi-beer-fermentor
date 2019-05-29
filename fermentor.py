@@ -1,4 +1,6 @@
-import time, os, threading, json, sys
+#!/usr/bin/python3
+
+import time, os, json
 import RPi.GPIO as GPIO
 import requests
 import uuid
@@ -52,7 +54,7 @@ while True:
     json_data = json.dumps(data)
 
     try:
-        r = requests.put('http://10.10.10.148:9200/fermentor-' + str(datetime.now().year) + '/_doc/' + log_uuid, data=json_data, headers=headers)
+        r = requests.put('http://<elasticsearch node IP>:9200/fermentor-' + str(datetime.now().year) + '/_doc/' + log_uuid, data=json_data, headers=headers)
         # print('code: ' + str(r.status_code))
         # print('content: ' + str(r.content))
     except Exception as e:
