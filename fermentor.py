@@ -5,7 +5,6 @@ import RPi.GPIO as GPIO
 import requests
 import uuid
 from datetime import datetime
-import pytz
 
 # gpio vars
 GPIO.setmode(GPIO.BCM)
@@ -47,18 +46,13 @@ while True:
         relayState = 1
 
     log_uuid = str(uuid.uuid1())
-
     date_time = datetime.utcnow().strftime("%Y-%m-%d %H:%M:%S")
-
     data = { 'currentTemp': temperature, 'relayState': relayState, 'date_time': date_time }
     json_data = json.dumps(data)
 
     try:
         r = requests.put('http://<elasticsearch node IP>:9200/fermentor-' + str(datetime.now().year) + '/_doc/' + log_uuid, data=json_data, headers=headers)
-        # print('code: ' + str(r.status_code))
-        # print('content: ' + str(r.content))
     except Exception as e:
         print('error in try: ' + str(e))
 
-    print('data: ' + json_data)
     time.sleep(30)
