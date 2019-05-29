@@ -22,9 +22,9 @@ def getRelayState():
     return relayState
 
 headers = { 'Content-Type': 'application/json' }
-
 relayState = 0
 lastTemp = 0
+
 while True:
     tempfile = open("/sys/bus/w1/devices/28-051680360fff/w1_slave")
     thetext = tempfile.read()
