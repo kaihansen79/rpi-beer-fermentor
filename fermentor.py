@@ -12,14 +12,10 @@ GPIO.setwarnings(False)
 GPIO.setup(18, GPIO.OUT)
 GPIO.output(18, GPIO.LOW)
 
-# TODO: make contents of this file a dict and start storing ES IP there
 with open('settings.json', 'r') as lf:
     settings = json.load(lf)
-    print('settings: ' + str(settings))
-
     desiredTemperature = settings['desiredTemp']
     esIp = settings['elasticDbIp']
-    print('desiredTemp: ' + str(desiredTemperature) + ' | esIp: ' + esIp)
 
 headers = { 'Content-Type': 'application/json' }
 relayState = 0
@@ -52,7 +48,7 @@ while True:
 
     try:
         r = requests.put('http://' + esIp + ':9200/fermentor-' + str(datetime.now().year) + '/_doc/' + log_uuid, data=json_data, headers=headers)
-        print(str(r.status_code))
+        print('currentTemp: ' + str(temperature))
     except Exception as e:
         print('error in try: ' + str(e))
 
