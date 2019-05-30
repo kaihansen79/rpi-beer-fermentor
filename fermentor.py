@@ -13,14 +13,13 @@ GPIO.setup(18, GPIO.OUT)
 GPIO.output(18, GPIO.LOW)
 
 # TODO: make contents of this file a dict and start storing ES IP there
-with open('targetTempLog.txt', 'r') as lf:
-    desiredTemperature = float(lf.read())
+with open('settings.json', 'r') as lf:
+    settings = json.load(lf)
+    print('settings: ' + str(settings))
 
-def getDesiredTemp():
-    return desiredTemperature
-
-def getRelayState():
-    return relayState
+    desiredTemperature = settings['desiredTemp']
+    esIp = settings['elasticDbIp']
+    print('desiredTemp: ' + str(desiredTemperature) + ' | esIp: ' + esIp)
 
 headers = { 'Content-Type': 'application/json' }
 relayState = 0
@@ -52,7 +51,8 @@ while True:
     json_data = json.dumps(data)
 
     try:
-        r = requests.put('http://<elasticsearch node IP>:9200/fermentor-' + str(datetime.now().year) + '/_doc/' + log_uuid, data=json_data, headers=headers)
+        r = requests.put('http://' + esIp + ':9200/fermentor-' + str(datetime.now().year) + '/_doc/' + log_uuid, data=json_data, headers=headers)
+        print(str(r.status_code))
     except Exception as e:
         print('error in try: ' + str(e))
 
