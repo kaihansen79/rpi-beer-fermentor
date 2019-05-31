@@ -1,9 +1,7 @@
 #!/usr/bin/python3
 
-import time, os, json
+import time, os, json, requests, uuid
 import RPi.GPIO as GPIO
-import requests
-import uuid
 from datetime import datetime
 
 # gpio vars
@@ -56,4 +54,4 @@ while True:
         relayState = 1
         sendToEs(temperature, relayState)
 
-    time.sleep(30)
+    time.sleep(60)
