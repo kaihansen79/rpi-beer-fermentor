@@ -1,6 +1,6 @@
 #!/usr/bin/python3
 
-import time, os, json, requests, uuid
+import time, os, json, requests, uuid, socket
 import RPi.GPIO as GPIO
 from datetime import datetime
 
@@ -19,11 +19,33 @@ headers = { 'Content-Type': 'application/json' }
 relayState = 0
 lastTemp = 0
 
-def sendToEs(ct, rs):
-    log_uuid = str(uuid.uuid1())
-    date_time = datetime.utcnow().strftime("%Y-%m-%d %H:%M:%S")
-    data = { 'currentTemp': ct, 'relayState': rs, 'date_time': date_time }
+def writeMetricsToLf(jsonData):
+    try:
+        with open('fermentor.log', 'w') as lf:
+            lf.write(jsonData + '\n')
+            lf.close() 
+    except Exception as e:
+        print('error attempting to write log ( jsonData ): ' + str(e)) e
+
+def getUuid():
+    return str(uuid.uuid1())
+
+def getDateTime():
+    return datetime.utcnow().strftime("%Y-%m-%d %H:%M:%S")
+
+def makeJsonData(ct, rs):
+    date_time = getDateTime()
+    device_id = socket.gethostname()
+    data = { 'currentTemp': ct, 'relayState': rs, 'date_time': date_time, 'device_id': device_id }
     json_data = json.dumps(data)
+
+    writeMetricsToLf(json_data)
+    
+    return json_data
+
+def sendToServer(ct, rs):
+    log_uuid = getUuid()
+    json_data = makeJsonData()
 
     try:
         r = requests.put('http://' + esIp + ':9200/fermentor-' + str(datetime.now().year) + '/_doc/' + log_uuid, data=json_data, headers=headers)
@@ -45,13 +67,14 @@ while True:
         print ('relay off')
         GPIO.output(18, GPIO.LOW)
         relayState = 0
-        sendToEs(temperature, relayState)
+        sendToServer(temperature, relayState)
             
     elif temperature < desiredTemperature-0.05 and relayState == 0:
         # turn on relay
         print ('relay on')
         GPIO.output(18, GPIO.HIGH)
         relayState = 1
-        sendToEs(temperature, relayState)
+        sendToServer(temperature, relayState)
 
     time.sleep(60)
+
