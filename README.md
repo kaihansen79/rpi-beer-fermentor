@@ -4,3 +4,4 @@ Python 3.7 application that leverages RPi GPIO pins to check temperature in a ca
 
 TODO:
   1. Logging
+  2. Move ES to cloud and repoint client to new IP
