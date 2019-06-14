@@ -30,7 +30,7 @@ def sendToEs(ct, rs):
     except Exception as e:
         print('error in try: ' + str(e))
         
-    print('currentTemp: ' + str(ct) + ' | relayState: ' + str(rs))
+    print(date_time + ', currentTemp: ' + str(ct) + ', relayState: ' + str(rs))
 
 while True:
     tempfile = open("/sys/bus/w1/devices/28-051680360fff/w1_slave")
@@ -52,6 +52,6 @@ while True:
         print ('relay on')
         GPIO.output(18, GPIO.HIGH)
         relayState = 1
-        sendToEs(temperature, relayState)
 
+    sendToEs(temperature, relayState)
     time.sleep(60)
