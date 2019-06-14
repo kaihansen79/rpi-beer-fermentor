@@ -38,20 +38,19 @@ while True:
     tempfile.close()
     tempdata = thetext.split("\n")[1].split(" ")[9]
     temperature = float(tempdata[2:])
-    temperature = (temperature/1000)*1.8+32
+    temperature_f = (temperature/1000)*1.8+32
    
-    if temperature > desiredTemperature+0.05 and relayState == 1:
+    if temperature_f > desiredTemperature+0.05 and relayState == 1:
         # turn off relay
         print ('relay off')
         GPIO.output(18, GPIO.LOW)
         relayState = 0
-        sendToEs(temperature, relayState)
             
-    elif temperature < desiredTemperature-0.05 and relayState == 0:
+    elif temperature_f < desiredTemperature-0.05 and relayState == 0:
         # turn on relay
         print ('relay on')
         GPIO.output(18, GPIO.HIGH)
         relayState = 1
 
-    sendToEs(temperature, relayState)
+    sendToEs(temperature_f, relayState)
     time.sleep(60)
