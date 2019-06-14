@@ -30,7 +30,7 @@ def sendToEs(ct, rs):
     except Exception as e:
         print('error in try: ' + str(e))
         
-    print(date_time + ', currentTemp: ' + str(ct) + ', relayState: ' + str(rs))
+    print(json_data)
 
 while True:
     tempfile = open("/sys/bus/w1/devices/28-051680360fff/w1_slave")
