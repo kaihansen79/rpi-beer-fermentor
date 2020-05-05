@@ -19,18 +19,15 @@ with open('settings.json', 'r') as lf:
     relayState = settings['relayState']
 
 headers = { 'Content-Type': 'application/json' }
-
 def sendToEs(ct, rs):
     log_uuid = str(uuid.uuid1())
     date_time = datetime.utcnow().strftime("%Y-%m-%d %H:%M:%S")
     data = { 'currentTemp': ct, 'relayState': rs, 'date_time': date_time }
     json_data = json.dumps(data)
-
     try:
         r = requests.put('http://' + esIp + ':9200/fermentor-' + str(datetime.now().year) + '/_doc/' + log_uuid, data=json_data, headers=hea$
     except Exception as e:
         print('error in try: ' + str(e))
-
     print('currentTemp: ' + str(ct) + ' | relayState: ' + str(rs))
 
 while True:
