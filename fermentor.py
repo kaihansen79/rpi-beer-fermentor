@@ -12,7 +12,6 @@ GPIO.setwarnings(False)
 GPIO.setup(18, GPIO.OUT)
 GPIO.output(18, GPIO.LOW)
 
-# TODO: make contents of this file a dict and start storing ES IP there
 with open('settings.json', 'r') as lf:
     settings = json.load(lf)
     desiredTemperature = settings['desiredTemp']
