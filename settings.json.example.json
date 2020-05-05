@@ -1,0 +1,5 @@
+{
+    "desiredTemp":75.0,
+    "elasticDbIp":"<IP>",
+    "relayState":0
+}
