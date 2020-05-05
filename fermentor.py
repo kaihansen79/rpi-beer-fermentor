@@ -18,6 +18,11 @@ with open('settings.json', 'r') as lf:
     esIp = settings['elasticDbIp']
     relayState = settings['relayState']
 
+def logMessage(msg):
+    ts = datetime.now()
+    with open('settings.json', 'r') as lf:
+        json.dump(msg, lf)
+
 headers = { 'Content-Type': 'application/json' }
 def sendToEs(ct, rs):
     log_uuid = str(uuid.uuid1())
@@ -26,9 +31,12 @@ def sendToEs(ct, rs):
     json_data = json.dumps(data)
     try:
         r = requests.put('http://' + esIp + ':9200/fermentor-' + str(datetime.now().year) + '/_doc/' + log_uuid, data=json_data, headers=headers)
+        if r.status_code != 200:
+            logMessage({'elasticWriteStatus':'failed', 'serverResponse':r.status_code})
+        else:
+            logMessage(data)
     except Exception as e:
-        print('error in try: ' + str(e))
-    print('currentTemp: ' + str(ct) + ' | relayState: ' + str(rs))
+        logMessage({'elasticWriteStatus':'failed', 'requestException':str(e)})
 
 while True:
     tempfile = open("/sys/bus/w1/devices/28-051680360fff/w1_slave")
@@ -40,13 +48,11 @@ while True:
 
     if temperature > desiredTemperature+0.025:
         # turn off relay
-        print ('relay off')
         GPIO.output(18, GPIO.LOW)
         relayState = 0
 
     elif temperature < desiredTemperature-0.025:
         # turn on relay
-        print ('relay on')
         GPIO.output(18, GPIO.HIGH)
         relayState = 1
 
