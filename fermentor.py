@@ -42,13 +42,13 @@ while True:
     temperature = float(tempdata[2:])
     temperature = (temperature/1000)*1.8+32
 
-    if temperature > desiredTemperature+0.05:
+    if temperature > desiredTemperature+0.025:
         # turn off relay
         print ('relay off')
         GPIO.output(18, GPIO.LOW)
         relayState = 0
 
-    elif temperature < desiredTemperature-0.05:
+    elif temperature < desiredTemperature-0.025:
         # turn on relay
         print ('relay on')
         GPIO.output(18, GPIO.HIGH)
@@ -59,4 +59,4 @@ while True:
         json.dump(settings, lf)
 
     sendToEs(temperature, relayState)
-    time.sleep(60)
+    time.sleep(15)
